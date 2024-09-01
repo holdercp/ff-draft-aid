@@ -41,6 +41,22 @@ function mapRankingsToPlayers(rankings: Ranking[]): Record<string, Player> {
 
 const players = mapRankingsToPlayers(rankings as Ranking[]);
 
+type PlayerProps = {
+  id: string;
+  onClick: (id: string) => void;
+};
+function Player({ id, onClick }: PlayerProps) {
+  const player = players[id];
+  return (
+    <button
+      onClick={() => onClick(id)}
+      style={player.tier % 2 === 0 ? { backgroundColor: "salmon" } : undefined}
+    >
+      <span>{player.name}</span> <span>Tier {player.tier}</span>
+    </button>
+  );
+}
+
 function App() {
   const [draftedIds, setDraftedIds] = useState<string[]>([]);
   const availableIds = Object.keys(players).filter(
@@ -58,32 +74,28 @@ function App() {
   return (
     <main>
       <h1>FF Draft Aid</h1>
-      <section>
-        <h2>Available</h2>
-        <ol>
-          {availableIds.map((id) => {
-            const player = players[id];
-            return (
-              <li key={id} onClick={() => draftPlayer(id)}>
-                {player.name}
+      <div className="grid">
+        <section>
+          <h2>Available</h2>
+          <ol>
+            {availableIds.map((id) => (
+              <li key={id}>
+                <Player id={id} onClick={draftPlayer} />
               </li>
-            );
-          })}
-        </ol>
-      </section>
-      <section>
-        <h2>Drafted</h2>
-        <ol>
-          {draftedIds.map((id) => {
-            const player = players[id];
-            return (
-              <li key={id} onClick={() => undraftPlayer(id)}>
-                {player.name}
+            ))}
+          </ol>
+        </section>
+        <section>
+          <h2>Drafted</h2>
+          <ol>
+            {draftedIds.map((id) => (
+              <li key={id}>
+                <Player id={id} onClick={undraftPlayer} />
               </li>
-            );
-          })}
-        </ol>
-      </section>
+            ))}
+          </ol>
+        </section>
+      </div>
     </main>
   );
 }
